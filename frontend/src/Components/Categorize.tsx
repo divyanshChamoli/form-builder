@@ -7,6 +7,8 @@ import { CategoryType, ItemType } from "../types/types";
 import { v4 as uuid } from "uuid";
 import InputField from "./InputField";
 import { questions } from "../utils/util";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 
 function Categorize() {
   const [category, setCategory] = useState<string>("");
@@ -14,6 +16,33 @@ function Categorize() {
   const [question, setQuestion] = useState("");
   const [items, setItems] = useState<ItemType[]>([]);
   const [item, setItem] = useState<string>("");
+
+  function handleCategoryDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over) {
+      return;
+    }
+
+    setCategories((categories)=>{
+      const oldIndex = categories.findIndex(category=> category.id === active.id)
+      const newIndex = categories.findIndex(category=> category.id === over.id)
+      return arrayMove(categories, oldIndex, newIndex)
+    })
+  }
+  function handleItemDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over) {
+      return;
+    }
+
+    setItems((items)=>{
+      const oldIndex = items.findIndex(item=> item.id === active.id)
+      const newIndex = items.findIndex(item=> item.id === over.id)
+      return arrayMove(items, oldIndex, newIndex)
+    })
+  }
 
   function onEnterPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -62,22 +91,28 @@ function Categorize() {
         </div>
         <div>Categories</div>
         <div className="flex flex-col gap-2">
-          {categories.map((category) => {
-            return (
-              <Item
-                key={category.id}
-                placeholder=""
-                draggable
-                removable
-                value={category.placeholder}
-                onChange={() => {}}
-                onKeyDown={() => {}}
-                removeCategory={() => removeCategory(category.id)}
-                deleteId={category.id}
-              />
-            );
-          })}
+          <DndContext onDragEnd={handleCategoryDragEnd}>
+            <SortableContext items={categories}>
+              {categories.map((category) => {
+                return (
+                  <Item
+                    key={category.id}
+                    placeholder=""
+                    draggable
+                    removable
+                    value={category.placeholder}
+                    onChange={() => {}}
+                    onKeyDown={() => {}}
+                    removeCategory={() => removeCategory(category.id)}
+                    deleteId={category.id}
+                    id={category.id}
+                  />
+                );
+              })}
+            </SortableContext>
+          </DndContext>
           <Item
+            id={uuid()}
             placeholder="Category (optional)"
             value={category}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -94,28 +129,34 @@ function Categorize() {
             <div>Belongs to</div>
           </div>
           <div className="flex flex-col">
-            {items.map((item) => {
-              return (
-                <div className="flex gap-20">
-                  <div>
-                    <Item
-                      key={item.id}
-                      placeholder=""
-                      draggable
-                      removable
-                      value={item.placeholder}
-                      onChange={() => {}}
-                      onKeyDown={() => {}}
-                      removeCategory={() => removeItem(item.id)}
-                      deleteId={item.id}
-                    />
-                  </div>
-                  <DropdownMenu dropDownItems={categories} />
-                </div>
-              );
-            })}
+            <DndContext onDragEnd={handleItemDragEnd}>
+              <SortableContext items={items}>
+                {items.map((item) => {
+                  return (
+                    <div className="flex gap-20">
+                      <div>
+                        <Item
+                          key={item.id}
+                          id={item.id}
+                          placeholder=""
+                          draggable
+                          removable
+                          value={item.placeholder}
+                          onChange={() => {}}
+                          onKeyDown={() => {}}
+                          removeCategory={() => removeItem(item.id)}
+                          deleteId={item.id}
+                        />
+                      </div>
+                      <DropdownMenu dropDownItems={categories} />
+                    </div>
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
             <div className="flex gap-20">
               <Item
+                id={uuid()}
                 placeholder="Item (optional)"
                 value={item}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
