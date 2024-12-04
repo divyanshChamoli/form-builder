@@ -1,4 +1,4 @@
-import { CheckSquare, Grip, Square, SquareCheck, X } from "lucide-react";
+import { Grip, Square, SquareCheck, X } from "lucide-react";
 import InputField from "./InputField";
 import { ChangeEvent } from "react";
 import { useSortable } from "@dnd-kit/sortable";
@@ -9,6 +9,7 @@ interface ItemProps {
   draggable?: boolean;
   removable?: boolean;
   checked?: boolean;
+  radio?: boolean;
   placeholder: string;
   value: string;
   onChange(e: ChangeEvent<HTMLInputElement>): void;
@@ -28,6 +29,7 @@ function Item({
   removeCategory,
   deleteId,
   checked,
+  radio,
 }: ItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: id });
@@ -49,7 +51,12 @@ function Item({
           <Grip />
         </button>
       )}
-      {checked === true ? (
+
+      {radio && <input type="radio" name="mcq_option" />}
+
+      {checked === undefined ? (
+        <></>
+      ) : checked === true ? (
         <SquareCheck size={50} fill={"#2463EB"} color="white" />
       ) : (
         <Square size={40} color="#E4E7EA" />

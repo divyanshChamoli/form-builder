@@ -1,11 +1,15 @@
 import Categorize from "../Components/Categorize"
 import Cloze from "../Components/Cloze"
+import Comprehension from "../Components/Comprehension"
+import Mcq from "../Components/Mcq"
 
 function FormBuilder() {
   return (
     <div>
         {/* <Categorize/> */}
-        <Cloze/>
+        {/* <Cloze/> */}
+        <Comprehension/>
+        {/* <Mcq/> */}
     </div>
   )
 }
