@@ -1,9 +1,11 @@
 import Categorize from "../Components/Categorize"
+import Cloze from "../Components/Cloze"
 
 function FormBuilder() {
   return (
     <div>
-        <Categorize/>
+        {/* <Categorize/> */}
+        <Cloze/>
     </div>
   )
 }
