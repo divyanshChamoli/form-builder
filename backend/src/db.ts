@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { QuizAnswerType, QuizType } from "../types/type";
+import { QuizAnswerType, QuizType } from "./type";
 const mongoose = import("mongoose");
 
 export const connectToDB = async () => {
@@ -15,42 +15,31 @@ export const connectToDB = async () => {
 
 connectToDB();
 
-// const QuizSchema = new Schema<QuizType>({
-//   title: String, // Title of the quiz
-//   questions: [
-//     {
-//       type: String, // Type of question (e.g., "Categorize", "Cloze", "Comprehension", "MCQ")
-//       data: Object, // Content structure depends on the question type
-//     },
-//   ],
-//   createdBy: String, // Optional - identifier for the user if not anonymous
-// });
 
 const QuizSchema = new Schema({
   headerImage: {
-    fileName: {
+    type:{ fileName: {
       type: String,
-    //   required: true,
+      required: true,
     },
     url: {
       type: String,
-    //   required: true,
-    },
+      required: true,
+    } },
+    required: false
   }, // Optional header image
-  questions: {
+  questions: [{
     type: {
-      type: {
-        type: String,
-        enum: ["MCQ", "Categorize", "Cloze", "Comprehension"],
-        required: true,
-      },
-      data: {
-        type: Schema.Types.Mixed, // Holds one of the question type schemas
-        required: true,
-      },
+      type: String,
+      enum: ["MCQ", "Categorize", "Cloze", "Comprehension"],
+      required: true,
     },
-    required: true,
-  }, // Array of question types
+    data: {
+      type: Schema.Types.Mixed, // Holds one of the question type schemas
+      required: true,
+    },
+    // required: true,
+  }], // Array of question types
   submittedBy: { type: String, default: "anonymous" },
 });
 
@@ -66,3 +55,4 @@ const QuizAnswerSchema = new Schema({
 
 export const QuizAnswer = model<QuizAnswerType>("QuizAnswer", QuizAnswerSchema);
 export const Quiz = model<QuizType>("Quiz", QuizSchema);
+
