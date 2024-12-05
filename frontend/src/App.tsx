@@ -9,7 +9,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/form" element={<FormBuilder/>} />
-          <Route path="/quiz" element={<Quiz/>} />
+          <Route path="/quiz/:quizId" element={<Quiz/>} />
         </Routes>
       </BrowserRouter>
     </div>

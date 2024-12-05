@@ -3,8 +3,10 @@ import express, { Request, Response } from "express";
 import multer from "multer";
 import { storage } from "./cloudinary";
 import { Quiz, QuizAnswer } from "./db";
+import cors from "cors"
 const app = express();
 app.use(express.json());
+app.use(cors())
 const upload = multer({ storage });
 
 app.post(

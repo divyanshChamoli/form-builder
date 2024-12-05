@@ -27,7 +27,7 @@ export interface ClozeQuestion {
 
 export interface MCQQuestion {
   type: "MCQ";
-  question: string; // Question text
+  questionText: string; // Question text
   options: string[]; // List of possible answers
   correctAnswer: string; // Correct answer explicitly stored
   image?: Image; // Optional image for the question
@@ -37,7 +37,7 @@ export interface ComprehensionQuestion {
   type: "Comprehension";
   data: {
     passage: string; // Reference text or passage
-    questions: MCQQuestion[]; // Array of associated MCQ questions with answers
+    subQuestions: MCQQuestion[]; // Array of associated MCQ questions with answers
     image?: Image; // Optional image for the question
   };
 }
