@@ -1,6 +1,11 @@
-import express, { Router } from "express"
+import express from "express"
+require('dotenv').config()
 const app = express()
-// const router = Router()
+
+// Form info 
+//Create form and put into db POST 
+//Edit form PUT
+//Submit form POST
 
 app.get("/",(req, res)=>{
     res.json({

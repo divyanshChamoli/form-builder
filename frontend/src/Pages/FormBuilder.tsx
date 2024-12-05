@@ -6,8 +6,8 @@ import Mcq from "../Components/Mcq"
 function FormBuilder() {
   return (
     <div>
-        {/* <Categorize/> */}
-        {/* <Cloze/> */}
+        <Categorize/>
+        <Cloze/>
         <Comprehension/>
         {/* <Mcq/> */}
     </div>
