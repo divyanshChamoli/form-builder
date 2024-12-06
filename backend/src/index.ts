@@ -8,6 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 const upload = multer({ storage });
+const PORT = process.env.PORT || 3000
 
 app.post(
   "/quiz",
@@ -189,6 +190,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Listening on port 3000");
 });
