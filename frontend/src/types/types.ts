@@ -1,8 +1,16 @@
 
-export interface CategoryType{
-    id: string,
-    placeholder: string
+// export interface CategoryType{
+//     id: string,
+//     placeholder: string
+// }
+export interface CategoryType {
+  id: string;
+  name: string;
+  value: QuestionType; // Add this property
+  placeholder: string; // Add this property
 }
+
+
 
 export interface ItemType{
     id: string,
@@ -15,6 +23,8 @@ export interface UnderlinedOptionType {
     checked: boolean,
     deletable: boolean
 }
+
+export type QuestionType = "Comprehension" | "Categorize" | "Cloze"
 
 export interface Image {
     fileName: string; // Name of the uploaded file
