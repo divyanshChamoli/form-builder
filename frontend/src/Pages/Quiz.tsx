@@ -12,6 +12,8 @@ type RouteParams = {
 };
 
 function Quiz() {
+  const BACKEND_URL = import.meta.env.VITE_BASE_URL
+
   const [quizData, setQuizData] = useState<QuizType>()
   
   const { quizId } = useParams<RouteParams>();
@@ -23,7 +25,7 @@ function Quiz() {
 
     useEffect(() => {
     async function getData() {
-      const response = await axios.get(`http://localhost:3000/quiz/${quizId}`);
+      const response = await axios.get(`${BACKEND_URL}/quiz/${quizId}`);
       setQuizData(response.data);
     }
 

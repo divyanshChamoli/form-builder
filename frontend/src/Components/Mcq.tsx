@@ -1,201 +1,120 @@
-import { useState } from "react";
-import { v4 as uuid } from "uuid";
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import InputField from "./InputField";  
-import Item from "./Item";
+import { useState, useEffect } from 'react';
 
 interface McqProps {
   questionIndex: number;
+  comprehensionId: number;
+  onOptionsUpdate: (options: string[], correctAnswer: string) => void;
 }
 
-function Mcq({ questionIndex }: McqProps) {
-  const [underlinedOptions, setUnderlinedOptions] = useState<any[]>([]);
-  const [underlinedOption, setUnderlinedOption] = useState("");
+function Mcq({ 
+  questionIndex, 
+  comprehensionId, 
+  onOptionsUpdate 
+}: McqProps) {
+  // Initialize with a default option
+  const [options, setOptions] = useState<string[]>(['Option 1']);
+  
+  // Correct answer is the selected option
+  const [correctAnswer, setCorrectAnswer] = useState<string>('Option 1');
+  
+  const [newOption, setNewOption] = useState<string>('');
 
-  // Handle drag and drop reordering of options
-  function handleOptionDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+  // Trigger options update whenever options or correct answer change
+  useEffect(() => {
+    onOptionsUpdate(options, correctAnswer);
+  }, [options, correctAnswer]);
 
-    if (!over) return;
-
-    setUnderlinedOptions((prevOptions) => {
-      const oldIndex = prevOptions.findIndex((option) => option.id === active.id);
-      const newIndex = prevOptions.findIndex((option) => option.id === over.id);
-      return arrayMove(prevOptions, oldIndex, newIndex);
-    });
-  }
-
-  // Add a new option when Enter is pressed
-  function onEnterPress(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" && underlinedOption.trim() !== "") {
-      setUnderlinedOptions((prevOptions) => [
-        ...prevOptions,
-        {
-          id: uuid(),
-          placeholder: underlinedOption,
-          deletable: true,
-        },
-      ]);
-      setUnderlinedOption("");
+  // Add a new option
+  const addOption = () => {
+    if (newOption.trim() && !options.includes(newOption.trim())) {
+      const newOptionValue = newOption.trim();
+      setOptions(prevOptions => [...prevOptions, newOptionValue]);
+      setNewOption('');
     }
-  }
+  };
+
+  // Add option on Enter key press
+  const onEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      addOption();
+    }
+  };
 
   // Remove an option
-  function removeOption(id: string) {
-    setUnderlinedOptions((prevOptions) =>
-      prevOptions.filter((option) => option.id !== id)
-    );
-  }
+  const removeOption = (optionToRemove: string) => {
+    setOptions(prevOptions => {
+      // Ensure at least one option remains
+      const updatedOptions = prevOptions.filter(option => option !== optionToRemove);
+      
+      // If no options left, reset with a default option
+      if (updatedOptions.length === 0) {
+        updatedOptions.push('Option 1');
+      }
+      
+      // If the removed option was the correct answer, select the first option
+      if (correctAnswer === optionToRemove) {
+        setCorrectAnswer(updatedOptions[0]);
+      }
+      
+      return updatedOptions;
+    });
+  };
 
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-2 mt-4">
-        <DndContext onDragEnd={handleOptionDragEnd}>
-          <SortableContext items={underlinedOptions}>
-            {underlinedOptions.map((option) => (
-              <Item
-                key={option.id}
-                id={option.id}
-                value={option.placeholder}
-                draggable
-                removable
-                radio
-                removeCategory={() => removeOption(option.id)}
-                deleteId={option.id}
-                placeholder=""
-                onChange={()=>{}}
-                onKeyDown={()=>{}}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
+        {options.map((option) => (
+          <div key={option} className="flex items-center gap-2">
+            <input
+              type="radio"
+              id={`option-${option}`}
+              name={`mcq-options-${comprehensionId}-${questionIndex}`}
+              value={option}
+              checked={correctAnswer === option}
+              onChange={() => setCorrectAnswer(option)}
+              className="mr-2"
+            />
+            <label htmlFor={`option-${option}`} className="flex-grow">
+              {option}
+            </label>
+            {options.length > 1 && (
+              <button 
+                onClick={() => removeOption(option)}
+                className="text-red-500 hover:text-red-700"
+              >
+                ✖
+              </button>
+            )}
+          </div>
+        ))}
+        
+        <div className="flex items-center gap-2 mt-2">
+          <input
+            type="text"
+            value={newOption}
+            onChange={(e) => setNewOption(e.target.value)}
+            onKeyDown={onEnterPress}
+            placeholder="Add new option"
+            className="flex-grow border p-1"
+          />
+          <button 
+            onClick={addOption}
+            className="bg-blue-500 text-white px-2 py-1 rounded"
+          >
+            Add
+          </button>
+        </div>
+      </div>
 
-        {/* Input to add options for the current MCQ */}
-        <Item
-          id={uuid()}
-          placeholder="Option"
-          value={underlinedOption}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setUnderlinedOption(e.target.value)
-          }
-          onKeyDown={onEnterPress}
-          removeCategory={() => {}}
-          deleteId=""
-        />
+      {/* Display correct answer and options for debugging/verification */}
+      <div className="mt-2 text-green-600">
+        Correct Answer: {correctAnswer}
+      </div>
+      <div className="mt-2 text-blue-600">
+        Options: {options.join(', ')}
       </div>
     </div>
   );
 }
 
 export default Mcq;
-
-
-// import Card from "./Card";
-// import Item from "./Item";
-// import { ChangeEvent, useState } from "react";
-// import { UnderlinedOptionType } from "../types/types";
-// import { v4 as uuid } from "uuid";
-// import InputField from "./InputField";
-// import { DndContext, DragEndEvent } from "@dnd-kit/core";
-// import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-
-// function Mcq() {
-//   const [underlinedOptions, setUnderlinedOptions] = useState<
-//     UnderlinedOptionType[]
-//   >([]);
-//   const [underlinedOption, setUnderlinedOption] = useState("");
-//   const [question, setQuestion] = useState("");
-
-//   function handleOptionDragEnd(event: DragEndEvent) {
-//     const { active, over } = event;
-
-//     if (!over) {
-//       return;
-//     }
-
-//     setUnderlinedOptions((underlinedOptions) => {
-//       const oldIndex = underlinedOptions.findIndex(
-//         (underlinedOption) => underlinedOption.id === active.id
-//       );
-//       const newIndex = underlinedOptions.findIndex(
-//         (underlinedOption) => underlinedOption.id === over.id
-//       );
-//       return arrayMove(underlinedOptions, oldIndex, newIndex);
-//     });
-//   }
-
-//   function onEnterPress(e: React.KeyboardEvent<HTMLInputElement>) {
-//     if (e.key === "Enter") {
-//       setUnderlinedOptions(() => [
-//         ...underlinedOptions,
-//         {
-//           id: uuid(),
-//           placeholder: underlinedOption,
-//           deletable: true,
-//           checked: false,
-//         },
-//       ]);
-//       setUnderlinedOption("");
-//     }
-//   }
-
-//   function removeOption(id: string) {
-//     setUnderlinedOptions((underlinedOptions) =>
-//       underlinedOptions.filter((underlinedOption) => underlinedOption.id !== id)
-//     );
-//   }
-
-//   return (
-//     <main className="w-screen flex flex-col items-center py-20">
-//       <Card>
-//         <div className="flex flex-col">
-//           <InputField
-//             placeholder="Question Text"
-//             value={question}
-//             onChange={(e) => {
-//               setQuestion(e.target.value);
-//             }}
-//             onKeyDown={() => {}}
-//           />
-//         </div>
-//         <div className="flex flex-col gap-2">
-//           <DndContext onDragEnd={handleOptionDragEnd}>
-//             <SortableContext items={underlinedOptions}>
-//               {underlinedOptions.map((underlinedOption) => {
-//                 return (
-//                   <Item
-//                     key={underlinedOption.id}
-//                     placeholder=""
-//                     draggable
-//                     radio
-//                     removable
-//                     value={underlinedOption.placeholder}
-//                     onChange={() => {}}
-//                     onKeyDown={() => {}}
-//                     removeCategory={() => removeOption(underlinedOption.id)}
-//                     deleteId={underlinedOption.id}
-//                     id={underlinedOption.id}
-//                   />
-//                 );
-//               })}
-//             </SortableContext>
-//           </DndContext>
-//           <Item
-//             id={uuid()}
-//             placeholder="Option"
-//             value={underlinedOption}
-//             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-//               setUnderlinedOption(e.target.value)
-//             }
-//             onKeyDown={onEnterPress}
-//             removeCategory={() => {}}
-//             deleteId=""
-//           />
-//         </div>
-//       </Card>
-//     </main>
-//   );
-// }
-
-// export default Mcq;

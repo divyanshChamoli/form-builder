@@ -1,8 +1,4 @@
 
-// export interface CategoryType{
-//     id: string,
-//     placeholder: string
-// }
 export interface CategoryType {
   id: string;
   name: string;
@@ -34,6 +30,7 @@ export interface Image {
   export interface CategorizeQuestion {
     type: "Categorize";
     data: {
+      questionText: string,
       categories: string[]; // List of category titles
       items: {
         text: string; // Option text
