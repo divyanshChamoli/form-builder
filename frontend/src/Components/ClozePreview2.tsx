@@ -40,7 +40,7 @@ function ClozePreview2( {sentence, draggableOptions} : ClozePreview2Props) {
         return updatedPlacements;
       });
     }
-  };
+  };  
 
   return (
     <div className="w-full h-96 bg-white rounded-lg shadow-lg p-16">

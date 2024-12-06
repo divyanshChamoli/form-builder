@@ -23,6 +23,11 @@ function Quiz() {
     return <></>;
   }
 
+  function handleSubmit(){
+    alert("Submit success")  
+    navigate("/")
+  }
+
     useEffect(() => {
     async function getData() {
       const response = await axios.get(`${BACKEND_URL}/quiz/${quizId}`);
@@ -33,14 +38,23 @@ function Quiz() {
   }, []);
   
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
-      <div className="w-1/2">
-        {quizData?.questions.map((question)=>{
+    <div className="w-screen flex justify-center items-center bg-gray-100">
+      <div className="w-1/2 ">
+        <div className="bg-blue-500 font-bold text-4xl p-10 text-center">QUIZ</div>
+        {quizData?.questions.map((question, idx)=>{
           return(
-            question.type === "Cloze" ? <ClozePreview2 sentence={question.data.sentence} draggableOptions={question.data.options} /> : 
-            question.type === "Comprehension" ? <ComprehensionPreview passage={question.data.passage} questions={question.data.subQuestions} /> : <CategorizePreview/> 
+            <div>
+              <div className="pt-5 pb-2">Question {idx+1}</div>
+              {question.type === "Cloze" ? <ClozePreview2 sentence={question.data.sentence} draggableOptions={question.data.options} /> : 
+              question.data.subQuestions === undefined ? <CategorizePreview questionText={question.data.questionText} 
+              categories={question.data.categories} items={question.data.items}/>  : 
+              <ComprehensionPreview passage={question.data.passage} questions={question.data.subQuestions} />}
+            </div>
           )
         })}
+        <button className="w-full text-center px-4 py-2 bg-green-500 text-white rounded mb-20" onClick={handleSubmit}>
+          Submit Quiz
+        </button>
       </div>
     </div>
   );

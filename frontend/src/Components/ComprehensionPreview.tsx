@@ -9,7 +9,7 @@ interface ComprehensionPreviewProps{
 function ComprehensionPreview({passage, questions} : ComprehensionPreviewProps) {
   
   return (
-    <div className="w-full h-96 bg-white rounded-lg shadow-lg p-16 flex flex-col gap-4">
+    <div className="w-full bg-white rounded-lg shadow-lg p-16 flex flex-col gap-4">
       {passage}
       <div className="">
         {questions.map((question)=>{

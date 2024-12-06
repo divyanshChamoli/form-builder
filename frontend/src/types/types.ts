@@ -71,7 +71,7 @@ export interface Image {
     _id: string; // MongoDB ObjectId as a string
     title: string; // Title of the quiz
     headerImage?: Image; // Optional header image at the top of the form
-    questions: (CategorizeQuestion | ClozeQuestion | ComprehensionQuestion)[]; // Array of different question types
+    questions: any[]; // Array of different question types
     createdAt: Date; // Timestamp for when the quiz was created
     createdBy: string; // Identifier for the creator, e.g., "anonymous" or user ID
   }
